@@ -46,6 +46,10 @@ def hr_request(message):
 
     bot.send_message(message.chat.id, text = (f'Среднее значение ЧД за все время измерений = {breath_rate}'))
 
+@bot.message_handler(content_types=["text"])
+def answer_all_other(message):
+    bot.send_message(message.chat.id, text="Введите, пожалуйста, одну из команд: /Heart_rate или /Breath_rate", reply_markup=markup)
+  
 
 
 

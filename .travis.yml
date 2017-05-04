@@ -4,5 +4,5 @@ python:
 - 3.6
 - pypy
 install:
-- pip install pyserial
+- pip install serial
 script: python3 test_receiver.py

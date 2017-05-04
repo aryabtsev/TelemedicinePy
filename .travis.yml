@@ -2,7 +2,6 @@ sudo: false
 language: python
 python:
 - 3.6
-- pypy
 install:
 - pip3 install pyserial
 script: python3 test_receiver.py

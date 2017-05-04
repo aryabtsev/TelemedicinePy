@@ -4,7 +4,5 @@ python:
 - 3.6
 - pypy
 install:
-- pip install telebot
 - pip install pyserial
-- pip install scipy
-script: python3 test_teceiver.py
+script: python3 test_receiver.py

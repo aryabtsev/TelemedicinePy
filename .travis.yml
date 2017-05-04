@@ -4,7 +4,6 @@ python:
 - 3.6
 - pypy
 install:
-- pip install sqlite3
 - pip install telembot
 - pip install pyserial
 - pip install scipy

@@ -3,7 +3,6 @@ from numpy.fft import rfft
 from scipy import signal
 
 
-
 class PlottingError(BaseException):
     def __init__(self, error):
         self.error_description = error
@@ -84,20 +83,71 @@ class FourierTransformaion:
         # except PlottingError as e:
         #     print(e.what())
 
-
     def transform(self):
         self.spectrum = rfft(self.signal)
         self._make_spectrum_Re()
 
+        
+def cut_min(array):
+    j = 0
+    x1 = array[j]
+    x2 = array[j]
+    while x2 >= x1:
+        x1 = x2
+        j += 1
+        x2 = array[j]
+    while x2 <= x1:
+        x1 = x2
+        j += 1
+        x2 = array[j]
+
+    return j
+
+
+class Heart_rate_calculator:
+    def __init__(self, spectrum):
+        self.spectrum = spectrum[3:]
+        self.result = []
+
+    def _get_two_high_points(self):
+        dict_spectrum = {}
+        for i in range(len(self.spectrum)):
+            dict_spectrum[int(self.spectrum[i])] = i
+
+        array_cpy = self.spectrum
+        extremums = []
+        j = 0
+        for i in range(2):
+            j += cut_min(array_cpy)
+            array_cpy = array_cpy[j:]
+            sorted_cpy = array_cpy[:]
+            sorted_cpy.sort()
+            extremums.append(sorted_cpy[-1])
+
+        result = []
+        result.append(dict_spectrum[int(extremums[0])])
+        result.append(dict_spectrum[int(extremums[1])])
+
+        return result
+
+    def calculate_results(self):
+        array = [16, 14, 12, 10, 5, 6, 8, 9, 3, 2, 5, 0, 1]
+        self.result = self._get_two_high_points()
+
 
 if __name__ == "__main__":
-    raw_signal = get_signal('raw_signal.txt')
-    filt = SignalFilter(raw_signal, 2048)
-    filt.forward_backward_filter()
-    filt.plot()
 
-    ft = FourierTransformaion(filt.filtered_signal)
+    raw_signal = get_signal('raw_signal.txt')
+    flt = SignalFilter(raw_signal, 2048)
+    flt.forward_backward_filter()
+    flt.plot()
+
+    ft = FourierTransformaion(flt.filtered_signal)
     ft.transform()
     ft.plot('full spectrum')
     ft.plot('cut spectrum')
+
+    clcltr = Heart_rate_calculator(ft.spectrum)
+    clcltr.calculate_results()
+    print(clcltr.result)
 

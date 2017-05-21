@@ -135,19 +135,19 @@ class Heart_rate_calculator:
         self.result = self._get_two_high_points()
 
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
 
-    raw_signal = get_signal('raw_signal.txt')
-    flt = SignalFilter(raw_signal, 2048)
-    flt.forward_backward_filter()
-    flt.plot()
+#    raw_signal = get_signal('raw_signal.txt')
+#    flt = SignalFilter(raw_signal, 2048)
+#    flt.forward_backward_filter()
+#    flt.plot()
 
-    ft = FourierTransformaion(flt.filtered_signal)
-    ft.transform()
-    ft.plot('full spectrum')
-    ft.plot('cut spectrum')
+#    ft = FourierTransformaion(flt.filtered_signal)
+#    ft.transform()
+#    ft.plot('full spectrum')
+#    ft.plot('cut spectrum')
 
-    clcltr = Heart_rate_calculator(ft.spectrum)
-    clcltr.calculate_results()
-    print(clcltr.result)
+#    clcltr = Heart_rate_calculator(ft.spectrum)
+#    clcltr.calculate_results()
+#    print(clcltr.result)
 

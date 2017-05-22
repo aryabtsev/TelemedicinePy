@@ -13,22 +13,22 @@ from DBwriter_class import DbWriter
 device = Receiver(1)
 device.init_port_manually('COM5')
 signal_size = 4096
-
+t = 0.002
 
 def full_signal_procedure(signal):
     flt = SignalFilter(signal, signal_size)
     flt.forward_backward_filter()
-    # flt.plot()
 
     ft = FourierTransformaion(flt.filtered_signal)
     ft.transform()
-    #ft.plot('full spectrum')
-    #ft.plot('cut spectrum')
 
     clcltr = Heart_rate_calculator(ft.spectrum)
-    clcltr.calculate_results()
-    #print(clcltr.result)
-    return clcltr.result
+    heart_freq, breath_freq = clcltr.get_fft_maximums()
+    heart_rate =60*1.57* heart_freq * 1/(signal_size*t)
+    breath_rate = 60 * 1.57 * breath_freq * 1 / (signal_size * t)
+    print(heart_rate, breath_rate)
+    #ft.plot('cut spectrum')
+    return heart_rate, breath_rate
 
 try:
     writer = DbWriter("173.230.151.37", 3306, "root", "BMT4Ever", "mydb")

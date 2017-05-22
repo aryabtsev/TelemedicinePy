@@ -1,8 +1,9 @@
 import telebot
-import config
-from DataB import DataB as DB
 from telebot import types
-from doctor import Doctors
+
+from bot import config
+from bot.DataB import DataB as DB
+from bot.doctor import Doctors
 
 bot = telebot.TeleBot(config.token)
 markup = types.ReplyKeyboardMarkup(resize_keyboard = True, one_time_keyboard = False)

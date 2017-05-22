@@ -5,7 +5,8 @@ import glob
 
 class Receiver:
 
-    def __init__(self):
+    def __init__(self, dev_id):
+        self.device_id = dev_id
         self.ser = serial.Serial()
         self.blue_channel = []
         self.green_channel = []
@@ -13,16 +14,26 @@ class Receiver:
         return
 
     def init_port(self):
-
         self.ser.baudrate = 115200
         self.ser.timeout = 1
         self.ser.parity = serial.PARITY_NONE
         self.ser.rtscts = 0
-        ports_list=self.get_list_of_com_ports()
+        ports_list = self.get_list_of_com_ports()
         if self.find_port(ports_list):
             return 1
         else:
             return 0
+    def init_port_manually(self,port_name):
+        self.ser.baudrate = 115200
+        self.ser.timeout = 1
+        self.ser.parity = serial.PARITY_NONE
+        self.ser.rtscts = 0
+        self.ser.port = port_name
+        try:
+            self.ser.open()
+        except serial.SerialException as e:
+            raise e
+
 
     def get_list_of_com_ports(self):
         if sys.platform.startswith('win'):
@@ -58,19 +69,16 @@ class Receiver:
                     self.ser.close()
                 else:
                     return 0
-            except serial.SerialException:
-                pass
+            except serial.SerialException as e:
+                raise e
             return 1
 
 
-
-    def send_request(self,data):
-        #takes binary as agument
-        #to send <CR> put b'\rL1\r
+    def send_request(self, data):
         try:
             self.ser.write(data)
-        except serial.SerialException:
-            print("port is not opened")
+        except serial.SerialException as e:
+            raise e
 
         return
 
@@ -85,39 +93,30 @@ class Receiver:
             return 1
         if len(parcel) != 7:
             return 1
+
         try:
             parcel_str = parcel.decode('utf-8')
-        except UnicodeEncodeError:
-            print("broken Data")
-            return 1
-
-        blue = parsel_str[0:-4]
-        try:
+            blue = parcel_str[0:-4]
+            green = parcel_str[3:-1]
             blue_int = int(blue, 16)
-        except ValueError:
-            print("broken data")
-            return 1
-
-        green = parsel_str[3:-1]
-        try:
             green_int = int(green, 16)
-        except ValueError:
-            print("broken data")
+            self.blue_channel.append(blue_int)
+            self.green_channel.append(green_int)
+            self.number_of_elts += 1
+        except UnicodeEncodeError as e:
+            raise e
             return 1
-
-        self.blue_channel.append(blue_int)
-        self.green_channel.append(green_int)
-        self.number_of_elts += 1
+        except ValueError as e:
+            raise e
+            return 1
         return 0
 
-rec = Receiver()
-if (rec.init_port()):
-    print("no ports found")
-else:
-    pass
+    def full_read_procedure(self):
+        self.send_request(b'\rL1\r')
+        self.read_data()
 
-#if rec.init_port('COM3') == 1:
- #   rec.send_request()
-  #  rec.read_data()
-
+    def clear_containers(self):
+        self.blue_channel.clear()
+        self.green_channel.clear()
+        self.number_of_elts = 0
 

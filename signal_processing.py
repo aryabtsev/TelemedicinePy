@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from numpy.fft import rfft
 from scipy import signal
+import operator
 
 
 class PlottingError(BaseException):
@@ -64,18 +65,19 @@ class FourierTransformaion:
         # try:
             if signal_name == 'signal':
                 plt.plot(self.signal, 'r')
-                plt.xlabel('Измерения')
-                plt.ylabel('Значение')
-                plt.title('Пришедший сигнал')
+                plt.xlabel('Measurements')
+                plt.ylabel('Result')
+                plt.title('Signal')
             elif signal_name == 'full spectrum' or signal_name == 'cut spectrum':
-                plt.xlabel('Номера измерений')
-                plt.ylabel('Значение частоты')
-                plt.title('Спектр')
+                plt.xlabel('Number of measurement')
+                plt.ylabel('Frequency')
+                plt.title('Spectra')
                 if signal_name == 'cut spectrum':
                     plt.xlim(xmax=50)
 
                 plt.plot(self.spectrum)
-                plt.title('spectrum1')
+                plt.title('spectrum')
+
             else:
                 raise PlottingError('you can plot signal or spectrum and nothing else')
             plt.grid(True)
@@ -106,8 +108,19 @@ def cut_min(array):
 
 class Heart_rate_calculator:
     def __init__(self, spectrum):
-        self.spectrum = spectrum[3:]
+        self.spectrum = spectrum
         self.result = []
+
+    def get_fft_maximums(self):
+        maxes = []
+        for i in range(2,len(self.spectrum)-2):
+            if self.spectrum[i] > self.spectrum[i+1] and self.spectrum[i] > self.spectrum[i-1]:
+                maxes.append((i, self.spectrum[i]))
+        sorted_maxes = sorted(maxes, key=lambda lis: lis[1])
+        sorted_maxes.reverse()
+        heart_freq = sorted_maxes[0][0]
+        breath_freq = sorted_maxes[1][0]
+        return heart_freq, breath_freq
 
     def _get_two_high_points(self):
         dict_spectrum = {}
@@ -135,19 +148,19 @@ class Heart_rate_calculator:
         self.result = self._get_two_high_points()
 
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
 
-    raw_signal = get_signal('raw_signal.txt')
-    flt = SignalFilter(raw_signal, 2048)
-    flt.forward_backward_filter()
-    flt.plot()
+#    raw_signal = get_signal('raw_signal.txt')
+#    flt = SignalFilter(raw_signal, 2048)
+#    flt.forward_backward_filter()
+#    flt.plot()
 
-    ft = FourierTransformaion(flt.filtered_signal)
-    ft.transform()
-    ft.plot('full spectrum')
-    ft.plot('cut spectrum')
+#    ft = FourierTransformaion(flt.filtered_signal)
+#    ft.transform()
+#    ft.plot('full spectrum')
+#    ft.plot('cut spectrum')
 
-    clcltr = Heart_rate_calculator(ft.spectrum)
-    clcltr.calculate_results()
-    print(clcltr.result)
+#    clcltr = Heart_rate_calculator(ft.spectrum)
+#    clcltr.calculate_results()
+#    print(clcltr.result)
 

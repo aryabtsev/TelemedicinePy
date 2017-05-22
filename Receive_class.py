@@ -6,7 +6,7 @@ import glob
 class Receiver:
 
     def __init__(self, dev_id):
-        self.device_is = dev_id
+        self.device_id = dev_id
         self.ser = serial.Serial()
         self.blue_channel = []
         self.green_channel = []

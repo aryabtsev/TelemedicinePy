@@ -8,3 +8,4 @@ sudo apt-get install  mysql-server
 mysql -u root -p BMT4Ever
 
 CREATE TABLE IF NOT EXISTS `mydb`.`Telemedicine` (  `device_id` INT NULL, `heart_rate` INT NULL,   `breath_rate` INT NULL,   `date` DATE NULL,   `time` TIME NULL) ENGINE = InnoDB;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'BMT4Ever';

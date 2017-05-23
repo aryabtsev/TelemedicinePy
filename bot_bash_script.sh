@@ -6,8 +6,8 @@ sudo apt-get upgrade python3
 
 apt install python3-pip
 
-pip3 install -r requirements.txt
-
 cd bot
+
+pip3 install -r requirements.txt
 
 python3 bot.py

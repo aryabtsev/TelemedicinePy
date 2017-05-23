@@ -34,7 +34,6 @@ class DataB:
 
     def get_current_data(self):
         data_to_send = time.strftime('%Y-%m-%d')
-        print(data_to_send)
         return data_to_send
 
     def select_daily(self, what, data_to_send):
@@ -72,11 +71,6 @@ class DataB:
 
     def make_daily_plot(self):
         current_data = self.get_current_data()
-
-        #!!!!!!!!!!!!!!!!!
-        current_data = '2017-05-22'
-        #!!!!!!!!!!!!!!!!!!!!
-
         times = self.select_daily('time', [current_data])
         for i in range(len(times)):
             times[i] = self._make_time(times[i][0])
@@ -91,8 +85,3 @@ class DataB:
     def close(self):
         # Закрываем текущее соединение с БД
         self.connection.close()
-
-
-writer = DataB("173.230.151.37", 3306, "root", "BMT4Ever", "mydb")
-writer.connect_to_db()
-plot_name = writer.make_daily_plot()

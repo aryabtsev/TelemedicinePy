@@ -50,17 +50,12 @@ def authorization(message):
 
 
 
-
-
-
-
-
 @bot.message_handler(regexp ='Heart_rate|/Heart_rate|Частота сердцебиения|/Частота сердцебиения')
 def hr_request(message):
 
     if message.chat.id in users:
         # Подключаемся к БД
-        db_worker = DB()
+        db_worker = DB("173.230.151.37", 3306, "root", "BMT4Ever", "mydb")
         # Вытягивание из БД среднего ЧСС
         heart_rate = DB.select_average_hr(db_worker)
 
@@ -68,7 +63,8 @@ def hr_request(message):
         bot.send_message(message.chat.id, text = (f'Среднее значение ЧСС за все время измерений = {heart_rate}'))
         # Отсоединяемся от БД
         db_worker.close()
-    else: bot.send_message(message.chat.id, text = "Вы не авторизованы. Для начала авторизуйтесь отправив /auth")
+    else:
+        bot.send_message(message.chat.id, text = "Вы не авторизованы. Для начала авторизуйтесь отправив /auth")
 
 
 
@@ -76,14 +72,15 @@ def hr_request(message):
 def hr_request(message):
     if message.chat.id in users:
         # Подключаемся к БД
-        db_worker = DB()
+        db_worker = DB("173.230.151.37", 3306, "root", "BMT4Ever", "mydb")
         # Вытягивание из БД среднего ЧСС
         breath_rate = DB.select_average_br(db_worker)
         # Отсоединяемся от БД
         db_worker.close()
 
         bot.send_message(message.chat.id, text = (f'Среднее значение ЧД за все время измерений = {breath_rate}'))
-    else: bot.send_message(message.chat.id, text = "Вы не авторизованы. Для начала авторизуйтесь отправив /auth")
+    else:
+        bot.send_message(message.chat.id, text = "Вы не авторизованы. Для начала авторизуйтесь отправив /auth")
 
 
 
@@ -94,13 +91,18 @@ def hr_request(message):
 def day_hr_request(message):
     if message.chat.id in users:
         # Подключаемся к БД
-        db_worker = DB()
-        # Вытягивание из БД среднего ЧСС
-        breath_rate = DB.select_day_hr(db_worker)
+        db_worker = DB("173.230.151.37", 3306, "root", "BMT4Ever", "mydb")
+        # Вытягивание из БД ЧСС за день
+        current_data = db_worker.get_current_data()
+        heart_rates = db_worker.select_daily('heart_rate', [current_data])
+        for i in range(len(heart_rates)):
+            heart_rates[i] = heart_rates[i][0]
+        # breath_rate = DB.select_day_hr(db_worker)
         # Отсоединяемся от БД
         db_worker.close()
-        bot.send_message(message.chat.id, text=(f'массив за день = {breath_rate}'))
-    else: bot.send_message(message.chat.id, text="Вы не авторизованы. Для начала авторизуйтесь отправив /auth")
+        bot.send_message(message.chat.id, text=(f'массив за день = {heart_rates}'))
+    else:
+        bot.send_message(message.chat.id, text="Вы не авторизованы. Для начала авторизуйтесь отправив /auth")
 
 
 

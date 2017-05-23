@@ -69,8 +69,8 @@ class DataB:
         result = hours + (minutes / 60) + (seconds / 3600)
         return result
 
-    def make_daily_plot(self):
-        current_data = self.get_current_data()
+    def make_daily_plot(self, current_data=time.strftime('%Y-%m-%d')):
+        # current_data = self.get_current_data()
         times = self.select_daily('time', [current_data])
         for i in range(len(times)):
             times[i] = self._make_time(times[i][0])
@@ -85,3 +85,8 @@ class DataB:
     def close(self):
         # Закрываем текущее соединение с БД
         self.connection.close()
+
+# worker = DataB("173.230.151.37", 3306, "root", "BMT4Ever", "mydb")
+# worker.connect_to_db()
+# worker.make_daily_plot()
+# worker.make_daily_plot('2017-05-22')

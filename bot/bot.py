@@ -101,7 +101,7 @@ def day_hr_request(message):
         # breath_rate = DB.select_day_hr(db_worker)
         # Отсоединяемся от БД
         db_worker.close()
-        bot.send_message(message.chat.id, text=(f'массив за день = {heart_rates}'))
+        bot.send_photo(message.chat.id, open(breath_rate, 'rb'))
     else:
         bot.send_message(message.chat.id, text="Вы не авторизованы. Для начала авторизуйтесь отправив /auth")
 

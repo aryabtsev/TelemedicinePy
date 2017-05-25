@@ -1,5 +1,7 @@
 import pymysql
 import datetime
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import time
 import os

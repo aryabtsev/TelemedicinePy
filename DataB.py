@@ -45,7 +45,7 @@ class DataB:
 
     def select_daily(self, what, data_to_send):
         #what == 'time' or 'heart_rate'
-        data_to_send = [time.strftime('%Y-%m-%d')]
+        #data_to_send = [time.strftime('%Y-%m-%d')]
         cursor = self.connection.cursor()
         sql = ("SELECT " + what + " FROM Telemedicine WHERE date=%s")
         cursor.execute(sql, data_to_send)
@@ -70,16 +70,17 @@ class DataB:
         fig.savefig(plot_name, fmt='png')
         return plot_name
 
-    def get_daily_plot(self,signal,query):
-        current_data = self._get_current_data()
-        times = self.select_daily('time', [current_data])
+    def get_daily_plot(self,signal,query, date):
+        current_data = date
+
+        times = self.select_daily('time', current_data)
         for i in range(len(times)):
             times[i] = times[i][0].seconds
 
-        query_rates = self.select_daily(query, [current_data])
+        query_rates = self.select_daily(query, current_data)
         for i in range(len(query_rates)):
             query_rates[i] = query_rates[i][0]
-
+        print(current_data)
         plot_name = self.save_daily_plot(times, query_rates, current_data, signal)
         return plot_name
 
